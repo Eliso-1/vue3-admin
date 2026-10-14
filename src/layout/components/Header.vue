@@ -7,10 +7,14 @@
 -->
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-// 导入 Element Plus 的两个图标（折叠和展开按钮用）
+// useRoute: 获取当前页面路由信息；useRouter: 用于页面路由跳转（例如退出登录后跳到 /login）
+import { useRoute, useRouter } from 'vue-router'
+// 导入 Pinia 用户状态仓库
+import { useUserStore } from '@/stores/user'
+// 导入 Element Plus 的折叠/展开图标
 import { Fold, Expand } from '@element-plus/icons-vue'
+// 导入 Element Plus 消息弹窗组件
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 /**
  * defineModel 是 Vue 3.4+ 的新特性，用于实现"双向绑定"
@@ -26,10 +30,35 @@ const isCollapse = defineModel('isCollapse', { type: Boolean })
 
 // 获取当前路由信息
 const route = useRoute()
+// 获取路由跳转实例
+const router = useRouter()
+// 获取全局用户状态
+const userStore = useUserStore()
 
 // 计算属性：获取当前页面的标题（来自路由的 meta.title）
 // 比如在 /dashboard 页面时，currentTitle 的值就是 '数据看板'
 const currentTitle = computed(() => route.meta.title)
+
+/**
+ * 退出登录逻辑
+ */
+async function handleLogout() {
+    try {
+        // 弹出确认对话框，防止用户误触
+        await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        })
+        // 用户点击了"确定"，调用 store 的清理动作（清空 token 和 localStorage）
+        userStore.logout()
+        ElMessage.success('已安全退出')
+        // 跳转回登录页面
+        router.push('/login')
+    } catch {
+        // 用户点击了"取消"或关闭弹窗，不执行任何操作
+    }
+}
 </script>
 
 <template>
@@ -60,7 +89,7 @@ const currentTitle = computed(() => route.meta.title)
         </div>
 
         <!-- 右侧区域：用户信息 -->
-        <div>
+        <div class="right">
             <!--
               el-dropdown 是 Element Plus 的下拉菜单组件
               点击用户头像/名称时会弹出菜单
@@ -68,15 +97,15 @@ const currentTitle = computed(() => route.meta.title)
             <el-dropdown>
                 <!-- 触发下拉菜单的元素：头像 + 用户名 -->
                 <span class="user">
-                    <!-- el-avatar 是头像组件，size=28 表示 28px 大小 -->
-                    <el-avatar size="28">A</el-avatar>
-                    <span class="name">管理员</span>
+                    <!-- el-avatar 是头像组件，size=28 表示 28px 大小，截取昵称第一个字作为头像文本 -->
+                    <el-avatar size="28">{{ userStore.userInfo?.nickname?.[0] || '管' }}</el-avatar>
+                    <span class="name">{{ userStore.userInfo?.nickname || '管理员' }}</span>
                 </span>
 
                 <!-- #dropdown 是下拉菜单的内容（使用具名插槽） -->
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>退出登录</el-dropdown-item>
+                        <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>

@@ -45,4 +45,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // server：本地开发服务器配置（npm run dev 时的行为）
+  server: {
+    // proxy：反向代理配置，用于解决前端调用后端接口时的"跨域问题"
+    proxy: {
+      // 只要请求路径以 '/api' 开头（例如 /api/login）
+      '/api': {
+        target: 'http://localhost:3000', // 转发给后端的实际地址（如本地运行的 mock 服务）
+        changeOrigin: true               // 允许跨域（把请求头中的 host 改为目标的 host）
+      }
+    }
+  }
 })

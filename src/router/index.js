@@ -26,6 +26,13 @@ import Layout from '@/layout/index.vue'
  */
 const routes = [
     {
+        path: '/login',         // 登录页路径
+        name: 'Login',
+        // 登录页是全屏展示的，因此不放在 Layout 下面，独立作为一个顶级路由
+        component: () => import('@/views/login/index.vue'),
+        meta: { title: '登录' }
+    },
+    {
         path: '/',              // 根路径
         component: Layout,      // 使用 Layout 布局组件作为外壳
         redirect: '/dashboard', // 访问 / 时自动跳转到 /dashboard
@@ -49,6 +56,12 @@ const routes = [
                 name: 'Department',
                 component: () => import('@/views/department/index.vue'),
                 meta: { title: '部门管理', icon: 'OfficeBuilding' }
+            },
+            {
+                path: 'settings',        // 完整路径：/settings
+                name: 'Settings',
+                component: () => import('@/views/settings/index.vue'),
+                meta: { title: '系统设置', icon: 'Setting' }
             }
         ]
     }
