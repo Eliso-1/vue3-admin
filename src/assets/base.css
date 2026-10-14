@@ -1,20 +1,37 @@
+/*
+  base.css —— Vite 脚手架自带的"CSS 变量"样式表
+
+  ⚠️ 提示：这个文件目前并没有被任何地方引用（main.js 引入的是 main.css），
+     属于项目创建时的模板遗留文件。下面是逐段注释，方便你理解它的作用，
+     如果不需要，后续可以安全删除。
+
+  它的主要作用是：用 CSS 变量（--xxx）定义一套颜色方案，
+  再根据用户的系统是"浅色"还是"深色"模式，自动切换配色。
+*/
+
 /* color palette from <https://github.com/vuejs/theme> */
+/* 定义颜色变量（调色板）：:root 代表整个文档的根，变量可在全局使用 */
 :root {
+  /* 白色系：纯白 / 柔和白 / 暗白 */
   --vt-c-white: #ffffff;
   --vt-c-white-soft: #f8f8f8;
   --vt-c-white-mute: #f2f2f2;
 
+  /* 黑色系：纯黑 / 柔和黑 / 暗黑 */
   --vt-c-black: #181818;
   --vt-c-black-soft: #222222;
   --vt-c-black-mute: #282828;
 
+  /* 主题靛蓝色（用于文字） */
   --vt-c-indigo: #2c3e50;
 
+  /* 分割线颜色：浅色主题和深色主题各两种深浅 */
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
   --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
   --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
 
+  /* 文字颜色：浅色主题和深色主题各两种 */
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
@@ -22,20 +39,22 @@
 }
 
 /* semantic color variables for this project */
+/* 语义化颜色变量：把上面的"调色板"映射成有含义的名字，使用起来更直观 */
 :root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background: var(--vt-c-white);            /* 页面背景色 */
+  --color-background-soft: var(--vt-c-white-soft);  /* 柔和背景色 */
+  --color-background-mute: var(--vt-c-white-mute);  /* 更暗的背景色 */
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-border: var(--vt-c-divider-light-2);        /* 边框颜色 */
+  --color-border-hover: var(--vt-c-divider-light-1);  /* 悬停时的边框颜色 */
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-heading: var(--vt-c-text-light-1);  /* 标题文字颜色 */
+  --color-text: var(--vt-c-text-light-1);     /* 正文文字颜色 */
 
-  --section-gap: 160px;
+  --section-gap: 160px;  /* 章节之间的间距 */
 }
 
+/* 当用户的系统偏好为"深色模式"时，覆盖上面这些变量，从而自动变暗 */
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);
@@ -50,22 +69,26 @@
   }
 }
 
+/* 样式重置：所有元素及其伪元素统一去掉外边距，字体粗细恢复默认 */
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
+  box-sizing: border-box;   /* 宽高包含 padding 和 border */
+  margin: 0;                /* 清除默认外边距 */
+  font-weight: normal;      /* 不使用浏览器默认的加粗 */
 }
 
+/* 页面主体样式 */
 body {
-  min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
+  min-height: 100vh;                    /* 最小高度为整个视口高度 */
+  color: var(--color-text);             /* 使用上面定义的文字颜色变量 */
+  background: var(--color-background);  /* 使用背景色变量 */
+  /* 切换浅色/深色时，颜色有 0.5 秒的过渡动画 */
   transition:
     color 0.5s,
     background-color 0.5s;
-  line-height: 1.6;
+  line-height: 1.6;                     /* 行高，让文字更易读 */
+  /* 字体族：依次尝试，前面的找不到就用后面的 */
   font-family:
     Inter,
     -apple-system,
@@ -79,8 +102,8 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  font-size: 15px;                      /* 基础字号 */
+  text-rendering: optimizeLegibility;   /* 优化文字渲染，提升可读性 */
+  -webkit-font-smoothing: antialiased;  /* 让字体在苹果设备上更平滑 */
   -moz-osx-font-smoothing: grayscale;
 }

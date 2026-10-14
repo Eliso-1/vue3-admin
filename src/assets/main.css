@@ -1,35 +1,28 @@
-@import '@/assets/base.css';
+/*
+  main.css —— 全局基础样式（在 main.js 中被引入，作用于全站）
 
+  里面做的事：重置默认样式、统一字体、设置页面底色。
+*/
+
+/* 通配选择器 * 表示"所有元素"，这里做的是常见的"样式重置" */
+* {
+  margin: 0;                        /* 清除所有元素默认的外边距 */
+  padding: 0;                       /* 清除所有元素默认的内边距 */
+  box-sizing: border-box;           /* 让宽高包含 padding 和 border，布局更直观 */
+}
+
+/* 让 html、body 和最外层容器都撑满整个屏幕高度，
+   这样内部的百分比高度（如 100%）才能正常生效 */
+html,
+body,
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  height: 100%;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+/* 页面主体样式 */
+body {
+  /* 设置优先使用的字体（若前面的字体不存在，会自动往后查找） */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* 页面背景色：浅灰蓝，后台管理系统常用的底色 */
+  background-color: #f5f7fa;
 }
