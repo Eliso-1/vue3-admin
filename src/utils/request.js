@@ -10,7 +10,16 @@
 import axios from 'axios'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
+// 导入 Element Plus 的消息提示（用于错误提示弹窗）
 import { ElMessage } from 'element-plus'
+// 手动引入 ElMessage 的样式（初学者必看）
+// 为什么必须加这一行？
+// 本项目用的是"按需自动引入"，只有写在模板里的组件（如 <el-button>）才会被插件自动注入样式。
+// 而 ElMessage 是"函数式 API"，这里是 import { ElMessage } from 'element-plus' 显式引入的，
+// 会绕过自动注入样式的插件；此时若不再手动引入它的 CSS，
+// 弹窗节点虽然会被创建，但没有任何样式，在页面上是看不见的（看起来就像"没生效"）。
+// 所以：只要显式引入了 Element Plus 的函数式 API，就要手动补一行对应的 style/css。
+import 'element-plus/es/components/message/style/css'
 
 // 创建一个独立的 Axios 实例
 const request = axios.create({

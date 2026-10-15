@@ -15,6 +15,11 @@ import { useUserStore } from '@/stores/user'
 import { Fold, Expand } from '@element-plus/icons-vue'
 // 导入 Element Plus 消息弹窗组件
 import { ElMessageBox, ElMessage } from 'element-plus'
+// 补齐 ElMessage（消息提示）和 ElMessageBox（确认弹窗）的样式
+// 原因同上：显式 import 的函数式 API 不会被自动注入样式，必须手动引入对应的 CSS，
+// 否则它们能被创建出来，却因为没有样式而看不见，表现为"不生效"
+import 'element-plus/es/components/message/style/css'
+import 'element-plus/es/components/message-box/style/css'
 
 /**
  * defineModel 是 Vue 3.4+ 的新特性，用于实现"双向绑定"

@@ -12,6 +12,8 @@ import { createApp } from 'vue'
 // 导入 Pinia —— Vue 的状态管理库（类似一个"全局数据仓库"，用来在不同组件间共享数据）
 import { createPinia } from 'pinia'
 
+import { permission } from './directives/permission'
+
 // 导入 Element Plus 的所有图标组件（这样就可以在模板中直接用图标名称来显示图标）
 import * as ElementPlusIconVue from '@element-plus/icons-vue'
 
@@ -20,6 +22,8 @@ import App from './App.vue'
 
 // 导入路由配置（定义了 URL 路径和页面组件的对应关系）
 import router from './router'
+
+import './router/permission'
 
 // 第一步：创建 Vue 应用实例，App 组件是整棵组件树的"根"
 const app = createApp(App)
@@ -34,6 +38,8 @@ for (const [key, component] of Object.entries(ElementPlusIconVue)) {
 // 第三步：安装插件
 app.use(createPinia())  // 安装 Pinia 状态管理
 app.use(router)          // 安装 Vue Router 路由
+
+app.directive('permission', permission)
 
 // 第四步：将 Vue 应用挂载到 index.html 中 id="app" 的 <div> 元素上
 // 挂载后，Vue 就开始接管这个 DOM 元素，页面就"活"了

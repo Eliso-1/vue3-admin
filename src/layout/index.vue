@@ -17,25 +17,10 @@
 // ref 是 Vue 3 的响应式 API，用来创建一个"响应式变量"
 // 当这个变量的值改变时，页面会自动更新
 import { ref } from 'vue'
-// onMounted 是 Vue 生命周期的挂载后钩子（页面组件初次渲染到 DOM 完成后执行）
-import { onMounted } from 'vue'
-// 导入 Pinia 的用户状态仓库
-import { useUserStore } from '@/stores/user.js'
 // 导入侧边栏和顶栏子组件
 import Sidebar from './components/Sidebar.vue'
 import Header from './components/Header.vue'
 
-// 初始化用户 store 实例
-const userStore = useUserStore()
-
-// 当布局组件加载完成后触发：
-// 如果本地存有 token（说明用户已登录），但 Pinia 内存中还没有 userInfo（比如按 F5 刷新了网页）
-// 那么就自动调用 fetchUserInfo() 请求后端补充拉取最新的用户信息
-onMounted(() => {
-    if (userStore.token && !userStore.userInfo) {
-        userStore.fetchUserInfo()
-    }
-})
 // 控制侧边栏是否折叠的变量（true = 折叠，false = 展开）
 // 这个变量会传给 Sidebar 和 Header，让它们都能读取和修改
 const isCollapse = ref(false)

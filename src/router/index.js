@@ -24,53 +24,60 @@ import Layout from '@/layout/index.vue'
  * - meta: 路由的额外信息（如页面标题、图标名称），可以在组件中通过 route.meta 获取
  * - name: 路由的名称（方便代码中通过名称跳转页面）
  */
-const routes = [
+
+// 静态路由
+export const constantRoutes = [
     {
-        path: '/login',         // 登录页路径
+        path: '/login',
         name: 'Login',
-        // 登录页是全屏展示的，因此不放在 Layout 下面，独立作为一个顶级路由
-        component: () => import('@/views/login/index.vue'),
-        meta: { title: '登录' }
+        component: () => import('@/views/login/index.vue')
     },
     {
-        path: '/',              // 根路径
-        component: Layout,      // 使用 Layout 布局组件作为外壳
-        redirect: '/dashboard', // 访问 / 时自动跳转到 /dashboard
-        children: [
-            // 以下是 Layout 内部的子页面，它们会显示在 Layout 的 <RouterView /> 位置
-            {
-                path: 'dashboard',       // 完整路径：/dashboard
-                name: 'Dashboard',
-                // 使用"懒加载"方式导入组件：只有用户访问这个页面时才加载，提升首屏速度
-                component: () => import('@/views/dashboard/index.vue'),
-                meta: { title: '数据看板', icon: 'DataLine' }  // DataLine 是 Element Plus 的图标名
-            },
-            {
-                path: 'employee',        // 完整路径：/employee
-                name: 'Employee',
-                component: () => import('@/views/employee/index.vue'),
-                meta: { title: '员工管理', icon: 'User' }
-            },
-            {
-                path: 'department',      // 完整路径：/department
-                name: 'Department',
-                component: () => import('@/views/department/index.vue'),
-                meta: { title: '部门管理', icon: 'OfficeBuilding' }
-            },
-            {
-                path: 'settings',        // 完整路径：/settings
-                name: 'Settings',
-                component: () => import('@/views/settings/index.vue'),
-                meta: { title: '系统设置', icon: 'Setting' }
-            }
-        ]
+        path: '/',
+        name: 'Layout',
+        component: Layout,
+        redirect: '/dashboard',
+        children: [] //子路由登陆后动态添加
+    },
+    {
+        path: '/404',
+        name: 'NotFound',
+        component: () => import('@/views/error/404.vue')
+    }
+]
+
+// 动态路由：meta.roles 声明哪些角色可访问
+export const asyncRoutes = [
+    {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index.vue'),
+        meta: { title: '数据看板', icon: 'DataLine', roles: ['admin', 'user']}
+    },
+    {
+        path: 'employee',
+        name: 'Employee',
+        component: () => import('@/views/employee/index.vue'),
+        meta: { title: '员工管理', icon: 'User', roles: ['admin', 'user']}
+    },
+    {
+        path: 'department',
+        name: 'Department',
+        component: () => import('@/views/department/index.vue'),
+        meta: { title: '部门管理', icon: 'OfficeBuilding', roles: ['admin']}
+    },
+    {
+        path: 'setting',
+        name: 'Setting',
+        component: () => import('@/views/settings/index.vue'),
+        meta: { title: '系统设置', icon: 'setting', roles: ['admin']}
     }
 ]
 
 // 创建路由实例
 const router = createRouter({
     history: createWebHistory(), // 使用 History 模式（URL 中没有 #）
-    routes                       // 传入路由表
+    routes: constantRoutes       // 传入路由表
 })
 
 // 导出路由实例，在 main.js 中通过 app.use(router) 安装

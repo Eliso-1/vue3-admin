@@ -3,7 +3,7 @@
 
   功能：
   1. 显示系统 Logo
-  2. 根据路由表自动生成菜单项（不需要手动写每个菜单）
+  2. 菜单数据来自 Pinia 的 permissionStore（登录后按角色过滤后的动态路由），不需要手动写每个菜单
   3. 点击菜单项时自动跳转到对应页面
   4. 当前页面的菜单项会高亮显示
   5. 支持折叠/展开
@@ -11,10 +11,8 @@
 <script setup>
 // computed 用来创建"计算属性"——当依赖的数据变化时，它会自动重新计算
 import { computed } from 'vue'
-
-// useRoute：获取当前路由信息（比如当前 URL 是什么）
-// useRouter：获取路由实例（可以用来获取所有路由、进行页面跳转等）
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { usePermissionStore } from '@/stores/permission'
 
 // 定义组件接收的 Props（从父组件传过来的数据）
 // isCollapse：侧边栏是否折叠，类型为布尔值
@@ -22,19 +20,15 @@ defineProps({
     isCollapse: Boolean
 })
 
-// 获取当前路由和路由实例
+// 获取当前路由信息（用来判断当前在哪个页面，从而高亮对应菜单）
 const route = useRoute()
-const router = useRouter()
 
-// 计算属性：从路由表中自动提取菜单数据
-// 这样做的好处是：新增页面只需要在 router/index.js 中添加路由，菜单会自动出现
-const menus = computed(() => {
-    // 找到 path 为 '/' 的路由（也就是 Layout 路由）
-    const layoutRoute = router.getRoutes().find((r) => r.path === '/')
-    // 返回它的子路由中有 title 的（title 就是菜单显示的文字）
-    return layoutRoute.children.filter((r) => r.meta?.title)
-})
+// 权限 store，里面存着"当前用户能访问的菜单路由"
+const permissionStore = usePermissionStore()
 
+// 计算属性：直接读取权限 store 里按角色过滤好的菜单列表
+// 好处：不同角色看到的菜单自动不同，且 store 里数据变化时菜单会同步更新
+const menus = computed(() => permissionStore.menuRoutes)
 // 计算属性：当前高亮的菜单路径（用于 el-menu 的 default-active）
 const activePath = computed(() => route.path)
 </script>

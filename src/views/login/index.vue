@@ -14,6 +14,9 @@ import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+// 引入 ElMessage 对应的样式文件，否则弹窗没有样式、在页面上看不见
+// （原因：这里显式 import 了 ElMessage，会绕过自动注入样式的插件，必须手动补 CSS）
+import 'element-plus/es/components/message/style/css'
 
 const route = useRoute()     // 获取当前路由信息（用于读取 URL 中的 redirect 重定向参数）
 const router = useRouter()   // 路由跳转实例
@@ -53,14 +56,13 @@ async function handleLogin() {
     try {
         // 3. 调用 userStore 的 login 动作（发送登录请求并保存 token）
         await userStore.login(form)
-        // 4. 登录成功后立即拉取当前用户信息
-        await userStore.fetchUserInfo()
-
-        // 5. 提示用户登录成功
+        
         ElMessage.success('登录成功')
 
         // 6. 路由跳转：如果之前访问受保护页面被拦截，会记录在 redirect 参数中，登录后优先跳回原页面
         router.push(route.query.redirect || '/')
+    } catch(e) {
+        console.warn('登陆失败:', e.message)
     } finally {
         // 无论成功还是失败，最后都关闭 loading
         loading.value = false

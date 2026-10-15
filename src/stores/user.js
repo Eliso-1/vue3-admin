@@ -8,6 +8,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { loginApi, getUserInfoApi } from '@/api/user'
+import { usePermissionStore } from '@/stores/permission'
 
 /**
  * defineStore 使用组合式 API（Setup Store 风格）写法：
@@ -52,6 +53,7 @@ export const useUserStore = defineStore('user', () => {
         token.value = ''
         userInfo.value = null
         localStorage.removeItem('token')
+        usePermissionStore.resetRoutes()
     }
 
     // 将需要供外部组件使用的状态和方法暴露出去
