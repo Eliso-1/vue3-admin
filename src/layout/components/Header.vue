@@ -46,23 +46,20 @@ const currentTitle = computed(() => route.meta.title)
 
 /**
  * 退出登录逻辑
+ * 流程：弹出确认框 → 用户点确定 → 清除登录状态 → 跳到登录页
  */
 async function handleLogout() {
     try {
-        // 弹出确认对话框，防止用户误触
-        await ElMessageBox.confirm('确定要退出登录吗？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        })
-        // 用户点击了"确定"，调用 store 的清理动作（清空 token 和 localStorage）
-        userStore.logout()
-        ElMessage.success('已安全退出')
-        // 跳转回登录页面
-        router.push('/login')
+        // 弹出二次确认弹窗（防止误操作）
+        // 用户点"取消"时 ElMessageBox 会抛出异常，catch 后直接 return
+        await ElMessageBox.confirm('确定要退出登录吗？', '提示', { type: 'warning' })
     } catch {
-        // 用户点击了"取消"或关闭弹窗，不执行任何操作
+        return  // 用户取消，不执行任何操作
     }
+    // 调用 store 的 logout：清空 token、userInfo，并删除 localStorage 中的 token
+    userStore.logout()
+    // 跳转到登录页
+    router.push('/login')
 }
 </script>
 

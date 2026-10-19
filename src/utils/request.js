@@ -87,6 +87,9 @@ request.interceptors.response.use(
                 path: '/login',
                 query: { redirect: router.currentRoute.value.fullPath }
             })
+        } else if (response?.status === 403) {
+        // 403：有 Token 但权限不足，直接弹提示即可，不需要跳转登录页
+            ElMessage.error('没有权限访问该功能')
         } else {
             // 其他网络错误或服务器错误提示
             ElMessage.error(response?.data?.message || error.message || '网络连接异常')
