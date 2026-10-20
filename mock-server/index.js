@@ -253,6 +253,46 @@ app.delete('/api/employees/:id', auth, adminOnly, (req, res) => {
     res.json(ok(null))
 })
 
+/**
+ * 接口：数据看板汇总数据
+ * 请求方式：GET /api/dashboard
+ * 鉴权：需要登录（auth）
+ * 返回：{ stats, departmentStats, hireTrend }
+ */
+app.get('/api/dashboard', auth, (req, res) => {
+    // 在职人数
+    const active = employees.filter((e) => e.status === 1).length
+
+    // 各部门人数——供饼图使用（ECharts 饼图要求格式：[{ name, value }]）
+    const departmentStats = departments.map((d) => ({
+        name:  d.name,
+        value: employees.filter((e) => e.departmentId === d.id).length
+    }))
+
+    // 按月统计入职人数——供柱状图使用
+    // 第一步：用 monthMap 对象统计每个月有多少人入职（键=月份字符串，值=人数）
+    const monthMap = {}
+    employees.forEach((e) => {
+        const month = e.hireDate.slice(0, 7)  // 取 'YYYY-MM' 部分，如 '2022-03'
+        monthMap[month] = (monthMap[month] || 0) + 1
+    })
+    // 第二步：把对象转成数组并按月份升序排列（ECharts 柱状图要求数组格式）
+    const hireTrend = Object.keys(monthMap)
+        .sort()
+        .map((month) => ({ month, count: monthMap[month] }))  // month 变量名对应 map 回调参数
+
+    res.json(ok({
+        stats: {
+            total:           employees.length,
+            active,
+            left:            employees.length - active,
+            departmentCount: departments.length
+        },
+        departmentStats,
+        hireTrend
+    }))
+})
+
 // 启动服务，监听本地 3000 端口
 app.listen(3000, () => {
     console.log('Mock server is running on http://localhost:3000')

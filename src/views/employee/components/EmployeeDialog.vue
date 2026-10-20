@@ -32,10 +32,10 @@ const props = defineProps({
 const emit = defineEmits(['success'])
 
 // defineModel()：把弹窗是否显示的状态与父组件双向绑定（对应父组件的 v-model）
-const visible    = defineModel({ type: Boolean })
+const visible = defineModel({ type: Boolean })
 
 // 表单的 DOM 引用，用于调用 validate() 和 clearValidate()
-const formRef    = ref()
+const formRef = ref()
 // 控制提交按钮的 loading 状态，防止重复提交
 const submitting = ref(false)
 
