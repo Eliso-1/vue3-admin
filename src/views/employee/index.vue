@@ -8,7 +8,8 @@
   4. 分页展示员工列表
 -->
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 // 导入封装好的通用表格逻辑（分页、搜索、加载状态等）
 import { useTable } from '@/composables/useTable'
 // 导入员工相关接口
@@ -17,6 +18,8 @@ import { getEmployeeListApi, deleteEmployeeApi } from '@/api/employee'
 import { getDepartmentListApi } from '@/api/department'
 // 导入员工新增/编辑弹窗组件
 import EmployeeDialog from './components/EmployeeDialog.vue'
+
+const route = useRoute()
 
 /**
  * 使用 useTable 组合式函数，把表格相关的所有状态和方法一次性解构出来
@@ -45,7 +48,19 @@ const {
     refreshAfterDelete
 } = useTable(getEmployeeListApi, {
     // defaultQuery 定义了搜索表单的初始值（同时也是重置时恢复的值）
-    defaultQuery: { name: '', departmentId: '', status: '' }
+    defaultQuery: {
+        name: typeof route.query.name === 'string' ? route.query.name : '',
+        departmentId: '',
+        status: ''
+    }
+})
+
+watch(() => route.query.name, (name) => {
+    const searchName = typeof name === 'string' ? name : ''
+    if (query.name !== searchName) {
+        query.name = searchName
+        search()
+    }
 })
 
 // 部门列表：用于搜索栏和弹窗中的部门下拉选项

@@ -28,7 +28,7 @@ const isCollapse = ref(false)
 
 <template>
     <!-- 最外层容器，使用 flex 横向排列（侧边栏在左，主区域在右） -->
-    <div class="layout">
+    <div class="layout-shell">
 
         <!-- 左侧：侧边栏区域 -->
         <!-- :class 是动态 class，当 isCollapse 为 true 时，添加 collapsed 类名来缩小宽度 -->
@@ -62,38 +62,72 @@ const isCollapse = ref(false)
   lang="scss" 表示使用 SCSS 语法（支持嵌套写法，比普通 CSS 更方便）
 -->
 <style lang="scss" scoped>
-/* 整体布局：flex 横向排列，高度占满整个视口 */
-.layout {
-    display: flex;       /* 弹性布局，子元素默认横向排列 */
-    height: 100vh;       /* vh = viewport height，100vh 就是浏览器窗口的完整高度 */
+/* ===== 整体骨架：左右两栏，高度占满一屏 ===== */
+.layout-shell {
+    display: flex;
+    width: 100%;
+    height: 100vh;      /* 100vh = 视口高度，撑满整个浏览器窗口 */
+    min-height: 0;
+    overflow: hidden;   /* 页面级不滚动，滚动交给内容区 */
+    background: #f5f5f3;
 }
 
-/* 左侧边栏 */
+/* ===== 左侧边栏 ===== */
 .layout-aside {
-    width: 210px;                /* 展开时宽度 210px */
-    flex-shrink: 0;              /* 不允许被压缩（保证侧边栏宽度固定） */
-    background-color: #001529;   /* 深蓝色背景 */
-    transition: width 0.3s;      /* 宽度变化时有 0.3 秒的过渡动画 */
-    overflow: hidden;            /* 超出部分隐藏（折叠时文字不会溢出） */
+    width: 243px;
+    flex: 0 0 243px;        /* 固定宽度，不允许被压缩 */
+    overflow: hidden;
+    border-right: 1px solid #e9e8e7;
+    background: #fff;
+    /* 宽度变化时有 0.22s 过渡动画（折叠/展开的顺滑效果就来自这里） */
+    transition: width 0.22s ease, flex-basis 0.22s ease;
 
-    /* SCSS 嵌套写法：& 代表父选择器，即 .layout-aside.collapsed */
+    /* 折叠态：宽度收到 64px，只露出图标 */
     &.collapsed {
-        width: 64px;             /* 折叠时宽度缩小到 64px（只显示图标） */
+        width: 64px;
+        flex-basis: 64px;
     }
 }
 
-/* 右侧主区域 */
+/* ===== 右侧主区域：顶栏 + 内容区 纵向排列 ===== */
 .layout-main {
-    flex: 1;                     /* 占据剩余的所有空间 */
-    display: flex;               /* 内部也用 flex 布局 */
-    flex-direction: column;      /* 纵向排列（顶栏在上，内容在下） */
-    min-width: 0;                /* 防止内容过宽时撑破布局 */
+    display: flex;
+    min-width: 0;
+    flex: 1;                /* 占据侧边栏以外的全部宽度 */
+    flex-direction: column;
 }
 
-/* 内容区 */
+/* 内容区：具体页面在这里渲染，超出部分自己出滚动条 */
 .layout-content {
-    flex: 1;                     /* 占据主区域的剩余高度 */
-    padding: 20px;               /* 内边距 20px */
-    overflow: auto;              /* 内容超出时显示滚动条 */
+    min-height: 0;
+    flex: 1;
+    overflow: auto;
+    padding: 30px;
+}
+
+/* ===== 响应式：屏幕越窄，留白越小、侧边栏越窄 ===== */
+
+/* 平板：内容区留白缩小 */
+@media (max-width: 900px) {
+    .layout-aside {
+        width: 210px;
+        flex-basis: 210px;
+    }
+
+    .layout-content {
+        padding: 24px 20px;
+    }
+}
+
+/* 手机：侧边栏直接折叠成 64px（配合 Sidebar 里的 matchMedia 只显示图标） */
+@media (max-width: 760px) {
+    .layout-aside {
+        width: 64px;
+        flex-basis: 64px;
+    }
+
+    .layout-content {
+        padding: 18px 14px;
+    }
 }
 </style>
